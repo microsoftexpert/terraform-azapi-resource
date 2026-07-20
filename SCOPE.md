@@ -1,8 +1,8 @@
-# SCOPE — tf-mod-azapi-resource  (lightweight)
+# SCOPE — terraform-azapi-resource  (lightweight)
 
 ## Design intent
 Generic, secure-by-default wrapper around the `azapi_resource` primitive. It is the Casey's escape hatch
-for managing **any** Azure Resource Manager resource type for which no curated tier-2 `tf-mod-azapi-*`
+for managing **any** Azure Resource Manager resource type for which no curated tier-2 `terraform-azapi-*`
 module exists yet — preview services, brand-new api-versions, or properties `azurerm` does not expose.
 It is the **one** module that accepts a caller-supplied ARM `type` (and api-version); every curated
 module pins its type instead. Plan-only authoring; a human applies from CI.

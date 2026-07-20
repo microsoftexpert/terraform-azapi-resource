@@ -34,7 +34,7 @@ lifecycle of *any* ARM type — behind the secure defaults:
 
 > 💡 **Why it matters:** raw `azapi_resource` is a loaded syringe — a dynamic `body`, secrets that can
 > land in state, and read-backs that can leak. This module is the child-proof cap: it keeps the generic
-> power while making the locked-down resource the *default*. When a curated `tf-mod-azapi-<service>_<resource>`
+> power while making the locked-down resource the *default*. When a curated `terraform-azapi-<service>_<resource>`
 > module exists for your type, prefer it; reach for this generic wrapper when one does not exist yet.
 
 > ⚠️ **This is the one module that accepts a caller-supplied `type`** (and therefore a caller-chosen
@@ -58,7 +58,7 @@ Whether it's a star, a professional connection, or a coffee, every gesture helps
 ## 📁 Module Structure
 
 ```
-tf-mod-azapi-resource/
+terraform-azapi-resource/
 ├── providers.tf # required_providers (Azure/azapi ~> 2.10) + required_version >= 1.12.0; no provider block
 ├── variables.tf # type, placement, body, sensitive_body, identity, behavior tail, tags, timeouts, request_options
 ├── main.tf # one keystone azapi_resource.this; total renderer; dynamic identity/timeouts
@@ -76,10 +76,10 @@ tf-mod-azapi-resource/
 ```mermaid
 flowchart LR
  caller["Caller root config<br/>provider azapi + OIDC auth"]:::ext
- res["tf-mod-azapi-resource<br/>THIS · generic keystone"]:::this
- upd["tf-mod-azapi-update-resource<br/>patch existing"]:::sib
- act["tf-mod-azapi-resource-action<br/>control-plane action"]:::sib
- dp["tf-mod-azapi-data-plane-resource<br/>data-plane object"]:::sib
+ res["terraform-azapi-resource<br/>THIS · generic keystone"]:::this
+ upd["terraform-azapi-update-resource<br/>patch existing"]:::sib
+ act["terraform-azapi-resource-action<br/>control-plane action"]:::sib
+ dp["terraform-azapi-data-plane-resource<br/>data-plane object"]:::sib
  tier2["Curated tier-2 modules<br/>cognitiveservices, containerapp, roleassignment"]:::sib
  arm["Azure Resource Manager<br/>any Microsoft.* type"]:::keystone
  caller --> res
@@ -194,7 +194,7 @@ Smallest call that produces a real resource — a secure storage account:
 
 ```hcl
 module "storage_account" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-azapi-resource?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-azapi-resource?ref=v1.0.0"
 
   type      = "Microsoft.Storage/storageAccounts@2025-06-01"
   name      = "stcaseyexample001"
@@ -257,7 +257,7 @@ provider "azapi" {
 
 ```hcl
 module "resource_group" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-azapi-resource?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-azapi-resource?ref=v1.0.0"
 
   type      = "Microsoft.Resources/resourceGroups@2024-11-01"
   name      = "rg-casey-example"
@@ -277,7 +277,7 @@ module "resource_group" {
 
 ```hcl
 module "storage" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-azapi-resource?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-azapi-resource?ref=v1.0.0"
 
   type      = "Microsoft.Storage/storageAccounts@2025-06-01"
   name      = "stcaseydata001"
@@ -308,7 +308,7 @@ module "storage" {
 
 ```hcl
 module "key_vault" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-azapi-resource?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-azapi-resource?ref=v1.0.0"
 
   type      = "Microsoft.KeyVault/vaults@2024-11-01"
   name      = "kv-casey-prod"
@@ -335,7 +335,7 @@ module "key_vault" {
 
 ```hcl
 module "app" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-azapi-resource?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-azapi-resource?ref=v1.0.0"
 
   type      = "Microsoft.Web/sites@2024-04-01"
   name      = "app-casey-orders"
@@ -351,7 +351,7 @@ module "app" {
 
 # principal_id is NOT sensitive — RBAC needs a plain value.
 module "kv_reader" {
-  source       = "git::https://github.com/microsoftexpert/tf-mod-azapi-authorization-roleassignment?ref=v1.0.0"
+  source       = "git::https://github.com/microsoftexpert/terraform-azapi-authorization-roleassignment?ref=v1.0.0"
   scope        = module.key_vault.id
   role         = "Key Vault Secrets User"
   principal_id = module.app.principal_id
@@ -364,7 +364,7 @@ module "kv_reader" {
 
 ```hcl
 module "app" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-azapi-resource?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-azapi-resource?ref=v1.0.0"
 
   type      = "Microsoft.Web/sites@2024-04-01"
   name      = "app-casey-uami"
@@ -389,7 +389,7 @@ module "app" {
 
 ```hcl
 module "sql_server" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-azapi-resource?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-azapi-resource?ref=v1.0.0"
 
   type      = "Microsoft.Sql/servers@2023-08-01-preview"
   name      = "sql-casey-prod"
@@ -422,7 +422,7 @@ module "sql_server" {
 
 ```hcl
 module "storage" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-azapi-resource?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-azapi-resource?ref=v1.0.0"
 
   type      = "Microsoft.Storage/storageAccounts@2025-06-01"
   name      = "stcaseyexport001"
@@ -444,7 +444,7 @@ output "blob_endpoint" {
 ```
 
 > ⚠️ Never export a secret path here — `output` lands in state. `azapi_resource` has no sensitive
-> read-back channel; for secret results use `tf-mod-azapi-resource-action`.
+> read-back channel; for secret results use `terraform-azapi-resource-action`.
 </details>
 
 <details>
@@ -452,7 +452,7 @@ output "blob_endpoint" {
 
 ```hcl
 module "subnet" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-azapi-resource?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-azapi-resource?ref=v1.0.0"
 
   type      = "Microsoft.Network/virtualNetworks/subnets@2024-05-01"
   name      = "snet-apps"
@@ -472,7 +472,7 @@ module "subnet" {
 
 ```hcl
 module "resource" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-azapi-resource?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-azapi-resource?ref=v1.0.0"
 
   type      = "Microsoft.OperationalInsights/workspaces@2023-09-01"
   name      = "law-casey"
@@ -496,7 +496,7 @@ module "resource" {
 
 ```hcl
 module "vm" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-azapi-resource?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-azapi-resource?ref=v1.0.0"
 
   type      = "Microsoft.Compute/virtualMachines@2024-07-01"
   name      = "vm-casey"
@@ -517,7 +517,7 @@ module "vm" {
 
 ```hcl
 module "budget" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-azapi-resource?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-azapi-resource?ref=v1.0.0"
 
   type      = "Microsoft.Consumption/budgets@2023-11-01"
   name      = "budget-casey-monthly"
@@ -542,7 +542,7 @@ module "budget" {
 
 ```hcl
 module "mg_policy" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-azapi-resource?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-azapi-resource?ref=v1.0.0"
 
   type      = "Microsoft.Authorization/policyAssignments@2024-04-01"
   name      = "require-tls12"
@@ -564,7 +564,7 @@ module "mg_policy" {
 
 ```hcl
 module "delete_lock" {
-  source = "git::https://github.com/microsoftexpert/tf-mod-azapi-resource?ref=v1.0.0"
+  source = "git::https://github.com/microsoftexpert/terraform-azapi-resource?ref=v1.0.0"
 
   type      = "Microsoft.Authorization/locks@2020-05-01"
   name      = "no-delete"
@@ -595,7 +595,7 @@ locals {
 }
 
 module "storage" {
-  source   = "git::https://github.com/microsoftexpert/tf-mod-azapi-resource?ref=v1.0.0"
+  source   = "git::https://github.com/microsoftexpert/terraform-azapi-resource?ref=v1.0.0"
   for_each = local.accounts
 
   type      = "Microsoft.Storage/storageAccounts@2025-06-01"
@@ -624,7 +624,7 @@ module "storage" {
 ```hcl
 # 1) Resource group (this module, subscription scope)
 module "resource_group" {
-  source    = "git::https://github.com/microsoftexpert/tf-mod-azapi-resource?ref=v1.0.0"
+  source    = "git::https://github.com/microsoftexpert/terraform-azapi-resource?ref=v1.0.0"
   type      = "Microsoft.Resources/resourceGroups@2024-11-01"
   name      = "rg-casey-orders"
   parent_id = "/subscriptions/00000000-0000-0000-0000-000000000000"
@@ -633,7 +633,7 @@ module "resource_group" {
 
 # 2) Secure storage account with a system identity (this module, RG scope)
 module "storage" {
-  source    = "git::https://github.com/microsoftexpert/tf-mod-azapi-resource?ref=v1.0.0"
+  source    = "git::https://github.com/microsoftexpert/terraform-azapi-resource?ref=v1.0.0"
   type      = "Microsoft.Storage/storageAccounts@2025-06-01"
   name      = "stcaseyorders001"
   parent_id = module.resource_group.id # ← wired from output
@@ -653,7 +653,7 @@ module "storage" {
 
 # 3) Grant the storage identity a role on the vault (principal_id wired from output)
 module "kv_secrets_user" {
-  source       = "git::https://github.com/microsoftexpert/tf-mod-azapi-authorization-roleassignment?ref=v1.0.0"
+  source       = "git::https://github.com/microsoftexpert/terraform-azapi-authorization-roleassignment?ref=v1.0.0"
   scope        = module.key_vault.id
   role         = "Key Vault Secrets User"
   principal_id = module.storage.principal_id # ← wired from output (not sensitive)
@@ -739,7 +739,7 @@ request_options = optional(object({ # advanced per-operation headers/query param
 
 **The generic-`type` exception, and when not to use it.** This is the only azapi module that accepts
 a caller-supplied `type`/api-version. That power is also its risk: there is no curated, deeply-typed
-`body` contract for a specific resource. Prefer a curated `tf-mod-azapi-<service>_<resource>` when one
+`body` contract for a specific resource. Prefer a curated `terraform-azapi-<service>_<resource>` when one
 exists; reach for this wrapper for preview services, a newer api-version than `azurerm` exposes, or a
 property `azurerm` does not surface. When you author a curated module, **pin** the type/api-version and
 mirror the body in a typed `object` — do not copy the `body = any` relaxation.
@@ -753,7 +753,7 @@ secret in `body`, an `output`, or an example.
 **Export control is the leak boundary.** `behavior.response_export_values` defaults to `[]`, so `output`
 is an empty object and nothing read-only is pulled into state. Opt in per JMESPath path/map, and only for
 **non-secret** values — `azapi_resource` has no sensitive read-back channel (that is what
-`tf-mod-azapi-resource-action` + `sensitive_response_export_values` is for). In regulated contexts also set
+`terraform-azapi-resource-action` + `sensitive_response_export_values` is for). In regulated contexts also set
 `disable_default_output = true` on the provider as belt-and-suspenders.
 
 **`parent_id` is the deployment scope.** Top-level resources take a scope ID (RG / subscription /
@@ -794,7 +794,7 @@ Authoring is **plan-only** (regulated-FI / PII / privacy-regulation posture) —
 context:
 
 ```bash
-cd tf-mod-azapi-resource
+cd terraform-azapi-resource
 terraform init -backend=false # downloads azapi ~> 2.10 only; no remote state
 terraform validate # type-checks variables.tf + main.tf
 terraform fmt -check -recursive # style gate
@@ -838,7 +838,7 @@ output       = {}                                     # nothing exported by defa
 | Symptom | Cause | Fix |
 |---|---|---|
 | `Body key rejected at plan` | `schema_validation_enabled` caught an unknown/malformed key for your api-version | Fix the key (camelCase, correct nesting). Don't reflexively disable validation. |
-| A secret/PII value landed in state or an output | You exported it via `behavior.response_export_values` | Set it back to `[]`; for secret read-backs use `tf-mod-azapi-resource-action` + `sensitive_response_export_values` |
+| A secret/PII value landed in state or an output | You exported it via `behavior.response_export_values` | Set it back to `[]`; for secret read-backs use `terraform-azapi-resource-action` + `sensitive_response_export_values` |
 | Secret shows as drift | Secret placed in `body`, or `ignore_missing_property = false` | Move it to `sensitive_body`; keep `ignore_missing_property = true` |
 | Wrong scope / `parent_id` | Top-level takes a scope ID; child takes the parent's ID; extension takes the target's ID | Build it with the provider functions |
 | Re-apply wants to replace the resource | You changed `name`, `parent_id`, or the resource-type portion of `type` (all force-new) | Expected. Changing only the api-version usually does not replace. |
@@ -851,7 +851,7 @@ output       = {}                                     # nothing exported by defa
 - Terraform azapi provider — [`azapi_resource`](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) resource reference
 - Azure Resource Manager template reference — `learn.microsoft.com/azure/templates/<RP>/<resource>` for the type you target
 - azapi provider functions — `resource_group_resource_id`, `subscription_resource_id`, `build_resource_id`, …
-- Sibling modules — `tf-mod-azapi-update-resource`, `tf-mod-azapi-resource-action`, `tf-mod-azapi-data-plane-resource`
+- Sibling modules — `terraform-azapi-update-resource`, `terraform-azapi-resource-action`, `terraform-azapi-data-plane-resource`
 - `SCOPE.md` (this module) — the authoritative cross-module contract
 
 ---
